@@ -1,0 +1,78 @@
+package automationFramework;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import junit.framework.Assert;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+
+public class FirstTestCase {
+
+	@SuppressWarnings("deprecation")
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		//WebDriver driver = new FirefoxDriver();
+		System.setProperty("webdriver.chrome.driver", "/Users/chandaa/Downloads/chromedriver");
+		WebDriver driver = new ChromeDriver();
+		driver.get("https://mobile.walmart.com/");
+		driver.manage().window().maximize();
+		driver.findElement(By.cssSelector(".js-searchbar-input.js-header-instant-placeholder.searchbar-input.tt-input")).sendKeys("socks");
+		//driver.findElement(By.id("Passwd")).sendKeys("password");
+		driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+		driver.findElement(By.cssSelector(".Modal-closeButton")).click();
+		driver.findElement(By.cssSelector(".searchbar-submit.js-searchbar-submit")).click();
+		WebElement product = driver.findElement(By.cssSelector("a[href*='Hanes-Men-s-12-Pack-Crew-Socks']"));
+		String prod_id = product.getAttribute("href").substring(product.getAttribute("href").lastIndexOf("/") +1);
+		product.click();
+		driver.findElement(By.id("WMItemAddToCartBtn")).click();
+		driver.findElement(By.id("PACViewCartBtn")).click();
+		String itemCount = driver.findElement(By.cssSelector("h3.cart-list-title span")).getText();
+		Assert.assertEquals("1 item.", itemCount);		
+		List<WebElement>selected_Items = driver.findElements(By.id("CartItemInfo"));
+		for (WebElement item : selected_Items ) {
+				String item_id = item.getAttribute("data-us-item-id");
+				Assert.assertEquals(prod_id, item_id);
+		}
+		driver.get("https://www.walmart.com/checkout/");
+		WebDriverWait wait = new WebDriverWait(driver,30);
+	    wait.until(ExpectedConditions.presenceOfElementLocated(By.id("COAC0WelAccntEmail")));   /*examining the id for a login     
+	    box*/
+//	    driver.findElement(By.xpath("//*[@id='campaignListTable']")).sendKeys("TEXT");   /*enter text in search 
+//	    box*/
+//		driver.findElement(By.id("COAC0WelAccntEmail")).click();
+//		driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+		driver.findElement(By.id("COAC0WelAccntEmail")).sendKeys("arijit2885@gmail.com");
+		driver.findElement(By.id("COAC0WelAccntPswd")).click();
+		driver.findElement(By.id("COAC0WelAccntPswd")).sendKeys("VMware1!");
+		driver.findElement(By.id("COAC0WelAccntSignInBtn")).click();
+		driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+		//wait.until(ExpectedConditions.presenceOfElementLocated(By.id("COAC1ShpOptBasicVALUE0Btn")));
+		//driver.findElement(By.cssSelector("input[id='COAC1ShpOptBasicVALUE0Btn']")).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.id("COAC1ShpOptContBtn")));
+		driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+		driver.findElement(By.id("COAC1ShpOptContBtn")).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.id("COAC2ShpAddrContBtn")));
+		driver.findElement(By.id("COAC2ShpAddrContBtn")).click();
+		driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+		wait.until(ExpectedConditions.elementToBeClickable(By.id("COAC3PayReviewOrderBtn")));
+		String paymentUrl = driver.getCurrentUrl();
+		Assert.assertTrue(paymentUrl.contains("payment"));
+		driver.get("https://www.walmart.com/cart/");
+		driver.findElement(By.id("CartRemItemBtn")).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.id"CartExistAccntSignInBtn")));
+		String itemCount1 = driver.findElement(By.cssSelector("h3.cart-list-title span")).getText();
+		driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+		Assert.assertEquals("0 items.", itemCount1);
+		driver.get("https://www.walmart.com/account/logout");
+		driver.close();
+	}
+
+}
