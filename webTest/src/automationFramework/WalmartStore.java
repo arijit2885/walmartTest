@@ -31,13 +31,13 @@ public class WalmartStore {
 	/*
 	 * Method to load the appropriate selenium driver based on browser type from input.
 	 */
-	public WebDriver initializeDriver (String driverType){
+	public WebDriver initializeDriver (String driverType, String driverPath){
 		if (driverType.equalsIgnoreCase("Firefox")){
 			WebDriver driver = new FirefoxDriver ();
 			return driver;
 		}
 		else if (driverType.equalsIgnoreCase("Chrome")){
-			System.setProperty("webdriver.chrome.driver", "/Users/chandaa/Downloads/chromedriver");
+			System.setProperty("webdriver.chrome.driver", driverPath);
 			WebDriver driver = new ChromeDriver();
 			return driver;
 		}
@@ -182,7 +182,8 @@ public class WalmartStore {
 		//initializing webdriver based on browser type
 		String driverType = testData.getProperty("browser");
 		try {
-				WebDriver driver = wrunner.initializeDriver(driverType);	
+	
+				WebDriver driver = wrunner.initializeDriver(driverType, testData.getProperty("driverPath"));	
 				WebDriverWait wait = new WebDriverWait(driver,30);
 				driver.get(testData.getProperty("testUrl"));
 				driver.manage().window().maximize();			
@@ -205,7 +206,7 @@ public class WalmartStore {
 				Assert.assertTrue(paymentUrl.contains("payment"));
 				wrunner.removeItemFromCart(driver, wait);
 				
-				//Asserting the tiem count after removing from cart
+				//Asserting the item count after removing from cart
 				String itemCount1 = wrunner.getItemCountOfCart(driver);
 				Assert.assertEquals(itemCount1, "0 items.");
 				driver.get("https://www.walmart.com/account/logout");
