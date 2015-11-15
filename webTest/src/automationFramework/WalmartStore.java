@@ -2,7 +2,6 @@ package automationFramework;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -192,7 +191,7 @@ public class WalmartStore {
 				//Asserting the item count and checking the item based on product id
 				Assert.assertEquals("1 item.", itemCount);		
 				Assert.assertEquals( wrunner.checkItemInCart(driver, prod_id), true);
-				
+				System.out.println("Asserts for item count and checking product haved PASSED.");
 				wrunner.proceedToCheckout(driver);
 			    wrunner.signInAtCheckout(driver,wait, testData.getProperty("username"),testData.getProperty("password"));
 			    wrunner.shipToHomeAndPayment(driver, wait);
@@ -201,12 +200,15 @@ public class WalmartStore {
 				String paymentUrl = driver.getCurrentUrl();
 				Assert.assertTrue(paymentUrl.contains("payment"));
 				wrunner.removeItemFromCart(driver, wait);
+				System.out.println("Assert for verifying payment page has PASSED");
 				
 				//Asserting the item count after removing from cart
 				String itemCount1 = wrunner.getItemCountOfCart(driver);
 				Assert.assertEquals(itemCount1, "0 items.");
+				System.out.println("Assert for verifying empty cart has PASSED ");
 				driver.get("https://www.walmart.com/account/logout");
 				driver.close();
+				System.out.println ("All tests have PASSED successfully.");
 			}
 		catch (Exception e){
 			e.printStackTrace();
